@@ -35,6 +35,7 @@ class Graph:
         Print each vertex in breadth-first order
         beginning from starting_vertex.
         """
+        print("DFS")
         search_queue = Queue()
         visited = set()
         search_queue.enqueue(starting_vertex)
@@ -42,6 +43,7 @@ class Graph:
             current_node = search_queue.dequeue()
             if current_node not in visited:
                 visited.add(current_node)
+                print(current_node)
                 neighbors = self.get_neighbors(current_node)
                 for n in neighbors:
                     search_queue.enqueue(n)
@@ -52,17 +54,33 @@ class Graph:
         Print each vertex in depth-first order
         beginning from starting_vertex.
         """
+        print("DFT - ITERATIVE")
         search_stack = Stack()
         search_stack.push(starting_vertex)
         visited = set()
-        while search_queue.size() > 0:
+        while search_stack.size() > 0:
             current_node = search_stack.pop()
             if current_node not in visited:
                 visited.add(current_node)
                 neighbors = self.get_neighbors(current_node)
+                print(current_node)
                 for n in neighbors:
                     search_stack.push(n)
         return visited
+
+    def dft_helper(self, vertex, visited):
+        if vertex in visited:
+            return
+
+        neighbors = self.get_neighbors(vertex)
+        print(vertex)
+        visited.append(vertex)
+
+        if len(neighbors) == 0:
+            return
+        else:
+            for i in neighbors:
+                self.dft_helper(i, visited)
 
     def dft_recursive(self, starting_vertex):
         """
@@ -71,7 +89,9 @@ class Graph:
 
         This should be done using recursion.
         """
-        pass  # TODO
+        print("DFT - RECURSIVE")
+        visited = []
+        self.dft_helper(starting_vertex, visited)
 
     def bfs(self, starting_vertex, destination_vertex):
         """
@@ -79,7 +99,23 @@ class Graph:
         starting_vertex to destination_vertex in
         breath-first order.
         """
-        pass  # TODO
+        queue = Queue()
+        visited = []
+        paths = {}
+        queue.enqueue(starting_vertex)
+        paths[starting_vertex] = [starting_vertex]
+        while queue.size() > 0:
+            current_vertex = queue.dequeue()
+            visited.append(current_vertex)
+            neighbors = self.get_neighbors(current_vertex)
+            for n in neighbors:
+                if n not in visited:
+                    new_path = [i for i in paths[current_vertex]]
+                    new_path.append(n)
+                    paths[n] = new_path
+                    if n == destination_vertex:
+                        return paths[n]
+                    queue.enqueue(n)
 
     def dfs(self, starting_vertex, destination_vertex):
         """
@@ -87,7 +123,45 @@ class Graph:
         starting_vertex to destination_vertex in
         depth-first order.
         """
-        pass  # TODO
+        stack = Stack()
+        visited = []
+        paths = {}
+        stack.push(starting_vertex)
+        paths[starting_vertex] = [starting_vertex]
+        while stack.size() > 0:
+            current_vertex = stack.pop()
+            visited.append(current_vertex)
+            neighbors = self.get_neighbors(current_vertex)
+            for n in neighbors:
+                if n not in visited:
+                    new_path = [i for i in paths[current_vertex]]
+                    new_path.append(n)
+                    paths[n] = new_path
+                    if n == destination_vertex:
+                        return paths[n]
+                    stack.push(n)
+
+    def dfs_helper(self, vertex, target, visited, paths):
+        if vertex in visited:
+            return paths
+
+        neighbors = self.get_neighbors(vertex)
+        visited.append(vertex)
+
+        if len(neighbors) == 0:
+            return paths
+        else:
+            for n in neighbors:
+                new_path = [i for i in paths[vertex]]
+                new_path.append(n)
+                paths[n] = new_path
+                if n == target:
+                    return new_path
+                new_paths = self.dfs_helper(n, target, visited, new_path)
+                if new_paths != None:
+                    return new_paths
+                else:
+                    return paths
 
     def dfs_recursive(self, starting_vertex, destination_vertex):
         """
@@ -97,7 +171,11 @@ class Graph:
 
         This should be done using recursion.
         """
-        pass  # TODO
+        print("DFS - RECURSIVE")
+        visited = []
+        paths = {}
+        paths[starting_vertex] = [starting_vertex]
+        print(self.dfs_helper(starting_vertex, destination_vertex, visited, paths))
 
 
 if __name__ == '__main__':
