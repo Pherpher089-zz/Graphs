@@ -143,39 +143,36 @@ class Graph:
 
     def dfs_helper(self, vertex, target, visited, paths):
         if vertex in visited:
-            return paths
+            return
 
         neighbors = self.get_neighbors(vertex)
         visited.append(vertex)
 
-        if len(neighbors) == 0:
-            return paths
-        else:
-            for n in neighbors:
-                new_path = [i for i in paths[vertex]]
-                new_path.append(n)
-                paths[n] = new_path
+        for n in neighbors:
+            if n not in visited:
+                paths[n] = paths[vertex] + [n]
+                print(paths)
                 if n == target:
-                    return new_path
-                new_paths = self.dfs_helper(n, target, visited, new_path)
-                if new_paths != None:
-                    return new_paths
+                    return paths[n]
                 else:
-                    return paths
+                    return self.dfs_recursive(n, target, visited, paths)
 
-    def dfs_recursive(self, starting_vertex, destination_vertex):
-        """
+    def dfs_recursive(self, starting_vertex, destination_vertex, visited=[], paths={}):
+
+        print("DFS - RECURSIVE")
+        if paths == {}:
+            paths[starting_vertex] = [starting_vertex]
+
+        new_paths = self.dfs_helper(
+            starting_vertex, destination_vertex, visited, paths)
+        return new_paths
+    """
         Return a list containing a path from
         starting_vertex to destination_vertex in
         depth-first order.
 
         This should be done using recursion.
         """
-        print("DFS - RECURSIVE")
-        visited = []
-        paths = {}
-        paths[starting_vertex] = [starting_vertex]
-        print(self.dfs_helper(starting_vertex, destination_vertex, visited, paths))
 
 
 if __name__ == '__main__':
